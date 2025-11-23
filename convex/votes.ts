@@ -39,6 +39,19 @@ export const pushVote = mutation({
   },
 });
 
+export const deleteVote = mutation({
+  args: { userId: v.string(), choice: v.string() },
+  handler: async (ctx, { userId, choice }) => {
+    await ctx.db.query("votes").withIndex("byUserId", q => q.eq("userId", userId).eq("choice", choice)).unique().then(async (vote) => {
+      if (vote) {
+        await ctx.db.delete(vote._id);
+      }
+    });
+  },
+});
+
+
+
 export const getVotesByUserId = query({
   args: { userId: v.string() },
   handler: async (ctx, { userId }) => {

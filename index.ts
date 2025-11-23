@@ -50,9 +50,14 @@ bot.on('callback_query:data', async (ctx) => {
   const existingVote = await convex.query(api.votes.get, { userId: userId.toString(), choice: choice });
 
   if (existingVote) {
-    await ctx.answerCallbackQuery({
-      text: `Вы уже голосовали за: ${existingVote.choice}`,
-      show_alert: true
+    await convex.mutation(api.votes.deleteVote, { userId: userId.toString(), choice: choice });
+    const votes = await convex.query(api.votes.getVotesByUserId, { userId: userId.toString() });
+    const variants=votes.map(v => v.choice);
+    await ctx.answerCallbackQuery({ text: `Убрали голос.
+Оставайтесь с @dr_sarha чтобы быть в курсе событий` });
+    await ctx.editMessageText(`Убрали голос.
+Оставайтесь с @dr_sarha чтобы быть в курсе событий`,{
+      reply_markup: getKeyboard(variants)
     });
     return;
   }
@@ -64,8 +69,10 @@ bot.on('callback_query:data', async (ctx) => {
   const variants=votes.map(v => v.choice);
   
 
-  await ctx.answerCallbackQuery({ text: `Ваш голос записан! Вы проголосовали за: ${choice}` });
-  await ctx.editMessageText(`Ваш голос записан! Вы проголосовали за: ${choice}`,{
+  await ctx.answerCallbackQuery({ text: `Спасибо за голос🔥
+Оставайтесь с @dr_sarha чтобы быть в курсе событий` });
+  await ctx.editMessageText(`Спасибо за голос🔥
+Оставайтесь с @dr_sarha чтобы быть в курсе событий`,{
     reply_markup: getKeyboard(variants)
   });
 });
