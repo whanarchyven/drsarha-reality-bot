@@ -1,13 +1,15 @@
 import { Bot } from 'grammy'; // легкий современный выбор для Node/Bun телеграм ботов
 import { ConvexHttpClient } from "convex/browser";
 import { api } from './convex/_generated/api';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Инициализация Convex клиента
 const convexUrl = process.env.CONVEX_URL;
 const convex = new ConvexHttpClient(convexUrl);
 
 // Токен бота
-const bot = new Bot(process.env.BOT_TOKEN);
+const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN);
 
 const participants = [
   "1 - Аяз Оруджов",

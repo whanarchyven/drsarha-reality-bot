@@ -1,6 +1,18 @@
 {
   "dependencies": {
+    "@types/node": "^24.10.1",
     "convex": "^1.29.3",
+    "dotenv": "^17.2.3",
     "grammy": "^1.38.4"
+  },
+  "name": "reality-bot",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
   }
 }
