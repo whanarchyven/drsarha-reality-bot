@@ -5,5 +5,5 @@ export default defineSchema({
   votes: defineTable({
     userId: v.string(),      // ID пользователя (как вы его определите в боте)
     choice: v.string(),      // выбранный участник
-  }).index("byUserId", ["userId"]),
+  }).index("byUserId", ["userId", "choice"]),
 });

@@ -23,11 +23,14 @@ const participants = [
 ];
 
 // Функция создания кнопок
-function getKeyboard() {
+function getKeyboard(variants?:string[]) {
   return {
-    inline_keyboard: participants.map((participant, index) => [
-      { text: participant, callback_data: `vote_${index}` }
-    ])
+    inline_keyboard: participants.map((participant, index) => {
+      return [{
+        text: variants?.find(v => v === participant) ? `✅ ${participant}` : participant,
+        callback_data: `vote_${index}`
+      }] 
+    })
   };
 }
 
@@ -44,21 +47,27 @@ bot.on('callback_query:data', async (ctx) => {
   const choiceIndex = parseInt(ctx.callbackQuery.data.replace('vote_', ''), 10);
   const choice = participants[choiceIndex];
   // Проверяем, голосовал ли уже пользователь (запрос в Convex)
-  const existingVote = await convex.query(api.votes.get, { userId: userId.toString() });
+  const existingVote = await convex.query(api.votes.get, { userId: userId.toString(), choice: choice });
 
   if (existingVote) {
     await ctx.answerCallbackQuery({
-      text: `Вы уже выбрали: ${existingVote.choice}`,
+      text: `Вы уже голосовали за: ${existingVote.choice}`,
       show_alert: true
     });
     return;
   }
 
   // Сохраняем голос пользователя (мутация в Convex)
-  await convex.mutation(api.votes.set, { userId: userId.toString(), choice: choice });
+  await convex.mutation(api.votes.pushVote, { userId: userId.toString(), choice: choice });
+  const votes = await convex.query(api.votes.getVotesByUserId, { userId: userId.toString() });
+  
+  const variants=votes.map(v => v.choice);
+  
 
-  await ctx.answerCallbackQuery({ text: `Спасибо за ваш выбор: ${choice}` });
-  await ctx.editMessageText(`Спасибо за ваш выбор: ${choice}`);
+  await ctx.answerCallbackQuery({ text: `Ваш голос записан! Вы проголосовали за: ${choice}` });
+  await ctx.editMessageText(`Ваш голос записан! Вы проголосовали за: ${choice}`,{
+    reply_markup: getKeyboard(variants)
+  });
 });
 
 // Запуск бота

@@ -2,11 +2,11 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export const get = query({
-  args: { userId: v.string() },
-  handler: async (ctx, { userId }) => {
+  args: { userId: v.string(), choice: v.string() },
+  handler: async (ctx, { userId, choice }) => {
     return await ctx.db
       .query("votes")
-      .withIndex("byUserId", q => q.eq("userId", userId))
+      .withIndex("byUserId", q => q.eq("userId", userId).eq("choice", choice))
       .unique(); // либо null, если ещё не голосовал
   },
 });
@@ -29,5 +29,19 @@ export const set = mutation({
     }
 
     await ctx.db.insert("votes", { userId, choice });
+  },
+});
+
+export const pushVote = mutation({
+  args: { userId: v.string(), choice: v.string() },
+  handler: async (ctx, { userId, choice }) => {
+    await ctx.db.insert("votes", { userId, choice });
+  },
+});
+
+export const getVotesByUserId = query({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }) => {
+    return await ctx.db.query("votes").withIndex("byUserId", q => q.eq("userId", userId)).collect();
   },
 });
