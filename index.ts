@@ -33,7 +33,7 @@ function getKeyboard(variants?:string[]) {
 
 // Стартовое сообщение с вопросом
 bot.command('start', async (ctx) => {
-  await ctx.replyWithPhoto('https://storage.yandexcloud.net/odd/2025-11-24%2015.11.13.jpg')
+  await ctx.replyWithPhoto('https://storage.yandexcloud.net/odd/%D0%BF%D0%BE%D1%81%D1%82%20%D1%80%D0%B5%D0%B0%D0%BB%D0%B8%D1%82%D0%B8%20%D1%80%D0%B0%D0%B7%D0%B1%D0%BE%D1%80%2019.png')
   await ctx.reply(`Проголосуйте за одного или нескольких полюбившийся участников🔍
 
 Именно ваш голос решает кто продолжит участие в проекте
